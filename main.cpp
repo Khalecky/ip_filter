@@ -6,12 +6,28 @@
 #include "ip_filter.h"
 
 
-int main(int argc, char const *argv[])
+auto split(const std::string &str, char d)
 {
+    IP r;
 
-    //std::cout << int(5/2) << std::endl; return 0;
-    //filter(45,56);
-    //return 0;
+    std::string::size_type start = 0;
+
+    std::string::size_type stop = str.find_first_of(d);
+    while(stop != std::string::npos)
+    {
+        r.push_back(str.substr(start, stop - start));
+
+        start = stop + 1;
+        stop = str.find_first_of(d, start);
+    }
+
+    r.push_back(str.substr(start));
+
+    return r;
+}
+
+int main()
+{
 
     try
     {
@@ -24,22 +40,25 @@ int main(int argc, char const *argv[])
 
         }
 
-        // TODO reverse lexicographically sort
-        std::sort(ip_pool.begin(), ip_pool.end(), cmp_ip);
+        std::sort(ip_pool.begin(), ip_pool.end(),
+            [](const IP &ip1, const IP &ip2) {
+                for (unsigned int i = 0; i < ip1.size(); ++i) {
+                    int part1 = std::stoi(ip1[i]);
+                    int part2 = std::stoi(ip2[i]);
 
-        /*****/
-        int i = 0;
-        //for(const auto &ip: ip_pool) { std::cout << (++i)  << ")"; print_ip(ip);        }
+                    if (part1 != part2)
+                        return part1 > part2;
+                }
+                return true;
+            }
+        );
 
-        /*****/
+        //for(const auto &ip: ip_pool)
+        //    print_ip(ip);
 
+        filter(ip_pool, 138);
         //filter(ip_pool, 46);
-        filter(ip_pool, 46, 70);
-
-
-
-        return 0;
-
+        //filter(ip_pool, 47, 183);
 
         // 222.173.235.246
         // 222.130.177.64
