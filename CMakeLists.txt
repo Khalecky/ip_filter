@@ -31,7 +31,7 @@ set_target_properties(ip_filter app_tests PROPERTIES
 #options for binary test-file only
 set_target_properties(app_tests PROPERTIES
     COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
-    INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}   #TODO variable does't exists
+    #INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}   #TODO variable does't exists
 )
 
 target_link_libraries(app_tests ${Boost_LIBRARIES})
