@@ -3,28 +3,9 @@
 #include <iostream>
 #include <string>
 
+#include "version.h"
 #include "ip_filter.h"
 
-
-auto split(const std::string &str, char d)
-{
-    IP r;
-
-    std::string::size_type start = 0;
-
-    std::string::size_type stop = str.find_first_of(d);
-    while(stop != std::string::npos)
-    {
-        r.push_back(str.substr(start, stop - start));
-
-        start = stop + 1;
-        stop = str.find_first_of(d, start);
-    }
-
-    r.push_back(str.substr(start));
-
-    return r;
-}
 
 int main()
 {
@@ -53,37 +34,11 @@ int main()
             }
         );
 
-        //for(const auto &ip: ip_pool)
-        //    print_ip(ip);
+        for(const auto &ip: ip_pool)
+            print_ip(ip);
 
-        filter(ip_pool, 138);
-        //filter(ip_pool, 46);
-        //filter(ip_pool, 47, 183);
-
-        // 222.173.235.246
-        // 222.130.177.64
-        // 222.82.198.61
-        // ...
-        // 1.70.44.170
-        // 1.29.168.152
-        // 1.1.234.8
-
-        // TODO filter by first byte and output
-        // ip = filter(1)
-
-        // 1.231.69.33
-        // 1.87.203.225
-        // 1.70.44.170
-        // 1.29.168.152
-        // 1.1.234.8
-
-        // TODO filter by first and second bytes and output
-        // ip = filter(46, 70)
-
-        // 46.70.225.39
-        // 46.70.147.26
-        // 46.70.113.73
-        // 46.70.29.76
+        print_ip_range(filter(ip_pool, 1));
+        print_ip_range(filter(ip_pool, 46, 70));
 
         // TODO filter by any byte and output
         // ip = filter_any(46)

@@ -11,7 +11,16 @@ find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
 configure_file(version.h.in ${PROJECT_SOURCE_DIR}/version.h)
 add_executable(ip_filter main.cpp ip_filter.cpp)
-add_executable(app_tests tests/test_module.cpp)
+add_executable(app_tests tests/test_module.cpp ip_filter.cpp)
+
+#copy file with ip pool for tests
+file(COPY ${PROJECT_SOURCE_DIR}/tests/ip_filter.tst
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/tests/ip_filter_first_byte.tst
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/tests/ip_filter_two_bytes.tst
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+#------------------------
 
 set_target_properties(ip_filter app_tests PROPERTIES
     CXX_STANDARD 14
