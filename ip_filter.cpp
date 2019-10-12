@@ -40,3 +40,16 @@ IP split(const std::string &str, char d)
 
     return r;
 }
+
+void filter_any(const listIP &ip_pool, int ip_part)
+{
+    std::string search_val = std::to_string(ip_part);
+    std::for_each(ip_pool.cbegin(), ip_pool.cend(),
+        [&](const IP& ip)
+        {
+            if(std::find(ip.cbegin(), ip.cend(), search_val) != ip.cend())
+                print_ip(ip);
+        }
+
+    );
+}

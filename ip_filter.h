@@ -17,6 +17,7 @@ IP split(const std::string &str, char d);
 void print_ip(const IP &ip);
 void print_ip_range(const rangeIP &range);
 
+void filter_any(const listIP &ip_pool, int ip_part);
 
 template<typename ...Args>
 rangeIP filter(const listIP &ip_pool, Args... ip_parts)

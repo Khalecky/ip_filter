@@ -40,6 +40,8 @@ int main()
         print_ip_range(filter(ip_pool, 1));
         print_ip_range(filter(ip_pool, 46, 70));
 
+        filter_any(ip_pool, 46);
+
         // TODO filter by any byte and output
         // ip = filter_any(46)
 
