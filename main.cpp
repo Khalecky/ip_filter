@@ -9,36 +9,24 @@
 
 int main()
 {
-
     try
     {
-        listIP ip_pool;
+        ip_pool_t ip_pool;
 
         for(std::string line; std::getline(std::cin, line);)
         {
             auto v = split(line, '\t');
-            ip_pool.push_back(split(v.at(0), '.'));
 
+            ip_pool.push_back( IP(v.at(0)) );
         }
 
-        std::sort(ip_pool.begin(), ip_pool.end(),
-            [](const IP &ip1, const IP &ip2) {
-                for (unsigned int i = 0; i < ip1.size(); ++i) {
-                    int part1 = std::stoi(ip1[i]);
-                    int part2 = std::stoi(ip2[i]);
-
-                    if (part1 != part2)
-                        return part1 > part2;
-                }
-                return true;
-            }
-        );
+        std::sort(ip_pool.begin(), ip_pool.end(), std::greater<uint32_t>() );
 
         for(const auto &ip: ip_pool)
-            print_ip(ip);
+            ip.print();
 
-        print_ip_range(filter(ip_pool, 1));
-        print_ip_range(filter(ip_pool, 46, 70));
+        print(filter(ip_pool, 1));
+        print(filter(ip_pool, 46, 70));
 
         filter_any(ip_pool, 46);
 

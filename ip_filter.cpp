@@ -1,39 +1,20 @@
 #include "ip_filter.h"
 
-void print_ip(const IP &ip)
+
+
+std::vector<std::string> split(const std::string &str, char sep)
 {
-    for(auto ip_part = ip.cbegin(); ip_part != ip.cend(); ++ip_part) {
-
-        if (ip_part != ip.cbegin())
-            std::cout << ".";
-
-        std::cout << *ip_part;
-    }
-    std::cout << std::endl;
-}
-
-void print_ip_range(const rangeIP &range)
-{
-    if (range.size() != 2)
-        return;
-
-    for(auto iter = range.front(); iter != range.back(); ++iter)
-        print_ip(*iter);
-}
-
-IP split(const std::string &str, char d)
-{
-    IP r;
+    std::vector<std::string> r;
 
     std::string::size_type start = 0;
 
-    std::string::size_type stop = str.find_first_of(d);
+    std::string::size_type stop = str.find_first_of(sep);
     while(stop != std::string::npos)
     {
         r.push_back(str.substr(start, stop - start));
 
         start = stop + 1;
-        stop = str.find_first_of(d, start);
+        stop = str.find_first_of(sep, start);
     }
 
     r.push_back(str.substr(start));
@@ -41,15 +22,67 @@ IP split(const std::string &str, char d)
     return r;
 }
 
-void filter_any(const listIP &ip_pool, int ip_part)
+void filter_any(const ip_pool_t &ip_pool, int ip_part)
 {
-    std::string search_val = std::to_string(ip_part);
     std::for_each(ip_pool.cbegin(), ip_pool.cend(),
-        [&](const IP& ip)
-        {
-            if(std::find(ip.cbegin(), ip.cend(), search_val) != ip.cend())
-                print_ip(ip);
+        [&](const IP& ip) {
+            if(ip.contains(ip_part))
+                ip.print();
         }
-
     );
+}
+
+
+
+////
+IP::IP(const std::string &_ip_str) : ip_str(_ip_str)
+{
+    auto str_list = split(ip_str, '.');
+
+    for (const auto&str: str_list)
+    {
+        unsigned char byte = std::stoi(str);
+        ip = ip << 8;
+        ip = ip | byte;
+        bytes.push_back(byte);
+    }
+}
+
+IP::IP(const int *p_bytes, size_t bytes_count)
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        bytes.push_back( (bytes_count > i ? static_cast<unsigned char>(p_bytes[i]) : 0) );
+        //
+        ip = ip << 8;
+        ip = ip | bytes.back();
+        //
+        if (i > 0)
+            ip_str.append(".");
+        ip_str.append(std::to_string(bytes.back()) );
+    }
+}
+
+bool IP::contains(int val) const
+{
+    return std::find(bytes.cbegin(), bytes.cend(), val) != bytes.cend();
+}
+
+
+void IP::print() const
+{
+    using namespace std;
+    print<ostream>(cout);
+}
+
+
+IP::operator int() const
+{
+    return ip;
+}
+
+int IP::operator[](size_t i) const
+{
+    //TODO check i < 4
+    return bytes[i];
 }

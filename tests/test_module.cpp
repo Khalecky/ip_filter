@@ -10,7 +10,7 @@
 
 using boost::test_tools::output_test_stream;
 
-listIP ip_pool;
+ip_pool_t ip_pool;
 
 void fill_ip_pool()
 {
@@ -22,21 +22,9 @@ void fill_ip_pool()
     for(std::string line; std::getline(ifs, line);)
     {
         //std::cout << line << std::endl;
-        auto v = split(line, '.');
-        ip_pool.push_back(v);
+        ip_pool.push_back(IP(line));
     }
 
-}
-
-void print_ip_test(output_test_stream &output, const IP& ip)
-{
-    for(auto iter = ip.cbegin(); iter != ip.cend(); ++iter) {
-
-        if (iter != ip.cbegin())
-            output << ".";
-        output << *iter;
-    }
-    output << std::endl;
 }
 
 
@@ -57,8 +45,7 @@ BOOST_AUTO_TEST_CASE(test_filter_first_byte)
     rangeIP range = filter(ip_pool, first_byte);
     BOOST_REQUIRE_EQUAL(range.size(), 2);
 
-    for(auto iter = range.front(); iter != range.back(); ++iter)
-        print_ip_test(output, *iter);
+    print<output_test_stream>(range, output);
 
     BOOST_REQUIRE (!output.is_empty(false));
     BOOST_CHECK( output.match_pattern() );
@@ -76,9 +63,7 @@ BOOST_AUTO_TEST_CASE(test_filter_two_bytes)
     BOOST_REQUIRE_EQUAL(range.size(), 2);
 
     //output << __PRETTY_FUNCTION__<< std::endl;
-    for(auto iter = range.front(); iter != range.back(); ++iter) {
-        print_ip_test(output, *iter);
-    }
+    print<output_test_stream>(range, output);
 
     BOOST_REQUIRE (!output.is_empty(false));
     BOOST_CHECK( output.match_pattern() );
