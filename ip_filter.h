@@ -7,15 +7,6 @@
 #include <vector>
 #include <algorithm>
 
-/*
-using IP_INT = size_t;
-using IP = std::vector<std::string>;
-using listIP = std::vector<IP>;
-using listIntIP = std::vector<IP_INT>;
-using rangeIP = std::vector<listIP::const_iterator>;
-*/
-
-
 struct IP
 {
     std::string ip_str;
@@ -37,7 +28,6 @@ struct IP
     int operator[](size_t i) const;
 
 private:
-
 
     uint32_t ip = 0;
     std::vector<unsigned char> bytes; //192.168.0.1 => bytes[0] = 192, bytes[1] = 168, ...
