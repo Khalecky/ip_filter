@@ -50,7 +50,7 @@ IP::IP(const std::string &_ip_str) : ip_str(_ip_str)
 
 IP::IP(const int *p_bytes, size_t bytes_count)
 {
-    for (int i = 0; i < 4; ++i)
+    for (size_t i = 0; i < 4; ++i)
     {
         bytes.push_back( static_cast<unsigned char>(bytes_count > i ? (p_bytes[i]) : 0) );
         //
