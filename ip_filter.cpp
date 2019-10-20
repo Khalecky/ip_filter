@@ -52,7 +52,7 @@ IP::IP(const int *p_bytes, size_t bytes_count)
 {
     for (int i = 0; i < 4; ++i)
     {
-        bytes.push_back( (bytes_count > i ? static_cast<unsigned char>(p_bytes[i]) : 0) );
+        bytes.push_back( static_cast<unsigned char>(bytes_count > i ? (p_bytes[i]) : 0) );
         //
         ip = ip << 8;
         ip = ip | bytes.back();
