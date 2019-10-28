@@ -7,42 +7,39 @@
 #include <vector>
 #include <algorithm>
 
+using StringList = std::vector<std::string>;
+
+StringList split(const std::string &str, char sep);
+
 struct IP
 {
     std::string ip_str;
+    std::vector<unsigned char> bytes; //192.168.0.1 => bytes[0] = 192, bytes[1] = 168, ...
 
-    IP(const std::string &ip_str);
-    IP(const int *p_bytes, size_t bytes_count);
-
-    void print() const;
+    explicit IP(const std::string &_ip_str) : ip_str(_ip_str)
+    {
+        auto str_list = split(ip_str, '.');
+        for (const auto&str: str_list)
+            bytes.push_back(static_cast<unsigned char>(std::stoi(str)));
+    }
 
     template<class T>
     void print(T& stream) const {
         stream << ip_str << std::endl;
     }
 
-
-    bool contains(int val) const;
-
-    operator int() const;
-    int operator[](size_t i) const;
-
-private:
-
-    uint32_t ip = 0;
-    std::vector<unsigned char> bytes; //192.168.0.1 => bytes[0] = 192, bytes[1] = 168, ...
+    inline void print() const { print<std::ostream>(std::cout);}
+    inline bool operator>(const IP &r) const { return bytes > r.bytes;}
+    inline bool operator<(const IP &r) const { return ! ( (*this) < r);}
+    inline bool contains(int val) const { return std::find(bytes.cbegin(), bytes.cend(), val) != bytes.cend();}
 };
 
-using ip_pool_t = std::vector<IP>;
-using rangeIP = std::vector<ip_pool_t::const_iterator>;
-
-
-std::vector<std::string> split(const std::string &str, char sep);
-
+using PoolIP = std::vector<IP>;
+using RangeIP = std::vector<PoolIP::const_iterator>;
 
 
 template<class T>
-void print(const rangeIP &range, T& stream)
+void print(const RangeIP &range, T& stream)
 {
     if (range.size() != 2)
         return;
@@ -51,14 +48,13 @@ void print(const rangeIP &range, T& stream)
         iter_ip->print<T>(stream);
 }
 
-inline void print(const rangeIP &range)
+inline void print(const RangeIP &range)
 {
-    using namespace std;
-    print<ostream>(range, cout);
+    print<std::ostream>(range, std::cout);
 }
 
 
-void filter_any(const ip_pool_t &ip_pool, int ip_part);
+void filter_any(const PoolIP &ip_pool, int ip_part);
 
 
 /*
@@ -68,24 +64,24 @@ void filter_any(const ip_pool_t &ip_pool, int ip_part);
     2) range with two iterators: iter_from, iter_to
 */
 template<typename ...Args>
-rangeIP filter(const ip_pool_t &ip_pool, Args... ip_parts)
+RangeIP filter(const PoolIP &ip_pool, Args... ip_parts)
 {
     const int count_args = sizeof...(ip_parts);
-    int arr[count_args] = {ip_parts ... };
+    int arr[count_args] = {ip_parts...};
 
-    rangeIP range;
+    RangeIP range;
 
     auto iter_from = ip_pool.cbegin();
     auto iter_to = ip_pool.cend();
 
     for (int i = 0; i < count_args; ++i)
     {
-        iter_from = std::lower_bound( iter_from, iter_to, arr[i], [&](const IP &ip, int val) { return ip[i] > val;});
+        iter_from = std::lower_bound( iter_from, iter_to, arr[i], [&](const IP &ip, int val) { return ip.bytes[i] > val;});
 
         if (iter_from == iter_to)
             return range;
 
-        iter_to = std::upper_bound( iter_from, iter_to, arr[i], [&](int val, const IP &ip) { return ip[i] < val;});
+        iter_to = std::upper_bound( iter_from, iter_to, arr[i], [&](int val, const IP &ip) { return ip.bytes[i] < val;});
     }
 
     range.push_back(iter_from);

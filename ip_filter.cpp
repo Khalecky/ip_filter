@@ -1,10 +1,9 @@
 #include "ip_filter.h"
 
 
-
-std::vector<std::string> split(const std::string &str, char sep)
+StringList split(const std::string &str, char sep)
 {
-    std::vector<std::string> r;
+    StringList r;
 
     std::string::size_type start = 0;
 
@@ -22,7 +21,7 @@ std::vector<std::string> split(const std::string &str, char sep)
     return r;
 }
 
-void filter_any(const ip_pool_t &ip_pool, int ip_part)
+void filter_any(const PoolIP &ip_pool, int ip_part)
 {
     std::for_each(ip_pool.cbegin(), ip_pool.cend(),
         [&](const IP& ip) {
@@ -30,59 +29,4 @@ void filter_any(const ip_pool_t &ip_pool, int ip_part)
                 ip.print();
         }
     );
-}
-
-
-
-////
-IP::IP(const std::string &_ip_str) : ip_str(_ip_str)
-{
-    auto str_list = split(ip_str, '.');
-
-    for (const auto&str: str_list)
-    {
-        unsigned char byte = std::stoi(str);
-        ip = ip << 8;
-        ip = ip | byte;
-        bytes.push_back(byte);
-    }
-}
-
-IP::IP(const int *p_bytes, size_t bytes_count)
-{
-    for (size_t i = 0; i < 4; ++i)
-    {
-        bytes.push_back( static_cast<unsigned char>(bytes_count > i ? (p_bytes[i]) : 0) );
-        //
-        ip = ip << 8;
-        ip = ip | bytes.back();
-        //
-        if (i > 0)
-            ip_str.append(".");
-        ip_str.append(std::to_string(bytes.back()) );
-    }
-}
-
-bool IP::contains(int val) const
-{
-    return std::find(bytes.cbegin(), bytes.cend(), val) != bytes.cend();
-}
-
-
-void IP::print() const
-{
-    using namespace std;
-    print<ostream>(cout);
-}
-
-
-IP::operator int() const
-{
-    return ip;
-}
-
-int IP::operator[](size_t i) const
-{
-    //TODO check i < 4
-    return bytes[i];
 }

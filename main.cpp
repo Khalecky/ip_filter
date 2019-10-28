@@ -9,9 +9,10 @@
 
 int main()
 {
+
     try
     {
-        ip_pool_t ip_pool;
+        PoolIP ip_pool;
 
         for(std::string line; std::getline(std::cin, line);)
         {
@@ -20,7 +21,7 @@ int main()
             ip_pool.push_back( IP(v.at(0)) );
         }
 
-        std::sort(ip_pool.begin(), ip_pool.end(), std::greater<uint32_t>() );
+        std::sort(ip_pool.begin(), ip_pool.end(), std::greater<IP>());
 
         for(const auto &ip: ip_pool)
             ip.print();
