@@ -30,7 +30,7 @@ struct IP
 
     inline void print() const { print<std::ostream>(std::cout);}
     inline bool operator>(const IP &r) const { return bytes > r.bytes;}
-    inline bool operator<(const IP &r) const { return ! ( (*this) < r);}
+    //inline bool operator<(const IP &r) const { return ! ( (*this) > r);}
     inline bool contains(int val) const { return std::find(bytes.cbegin(), bytes.cend(), val) != bytes.cend();}
 };
 
